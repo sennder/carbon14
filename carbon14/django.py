@@ -89,6 +89,8 @@ class ModelCollection(Collection):
         return instances
 
     def get_allowed_fields(self, user):
+        # Refresh the list.
+        self._allowed_fields = set()
         for group in user.group_names:
             self._allowed_fields.update(self._permitted_fields.get(group))
 
