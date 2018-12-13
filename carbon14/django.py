@@ -88,11 +88,9 @@ class ModelCollection(Collection):
 
         return instances
 
-    def get_allowed_field_list(self, user):
+    def get_allowed_fields(self, user):
         for group in user.group_names:
-            for item in self._permitted_fields:
-                if group in item.keys():
-                    self._allowed_fields_list.extend(list(item.values()))
+            self._allowed_fields.update(self._permitted_fields.get(group))
 
 
 class GraphQLView(APIView):

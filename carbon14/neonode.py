@@ -93,7 +93,7 @@ class Collection(metaclass=Node):
 
     _source = ()
     _permitted_fields = None
-    _allowed_fields_list = []
+    _allowed_fields = set()
 
     id = Field()
 
@@ -139,9 +139,7 @@ class Collection(metaclass=Node):
         if child in self._fields:
             if not self._permitted_fields:
                 return True
-            # FIX : This list includes a list of values instead of
-            # values directly. Check get_allowed_field_list method in django.py
-            return child in self._allowed_fields_list[0]
+            return child in self._allowed_fields
         return False
 
 
