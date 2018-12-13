@@ -84,7 +84,7 @@ class ModelCollection(Collection):
             instances = instances[:limit]
 
         if self._permitted_fields:
-            self.get_allowed_field_list(ctx.user)
+            self.get_allowed_fields(ctx.user)
 
         return instances
 

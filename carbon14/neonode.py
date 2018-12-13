@@ -137,9 +137,11 @@ class Collection(metaclass=Node):
 
     def field_is_allowed_and_accessible_according_to_policy(self, child):
         if child in self._fields:
-            if not self._permitted_fields:
-                return True
-            return child in self._allowed_fields
+            return (
+                child in self._allowed_fields
+                if self._permitted_fields
+                else True
+            )
         return False
 
 
