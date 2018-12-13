@@ -83,7 +83,7 @@ class ModelCollection(Collection):
         if limit:
             instances = instances[:limit]
 
-        if self._permitted_fields:
+        if self._permitted_fields_by_user_group:
             self.get_allowed_fields(ctx.user)
 
         return instances
@@ -92,7 +92,9 @@ class ModelCollection(Collection):
         # Refresh the list.
         self._allowed_fields = set()
         for group in user.group_names:
-            self._allowed_fields.update(self._permitted_fields.get(group))
+            self._allowed_fields.update(
+                self._permitted_fields_by_user_group.get(group)
+            )
 
 
 class GraphQLView(APIView):

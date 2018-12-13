@@ -92,7 +92,7 @@ class Node(type):
 class Collection(metaclass=Node):
 
     _source = ()
-    _permitted_fields = None
+    _permitted_fields_by_user_group = None
     _allowed_fields = set()
 
     id = Field()
@@ -139,7 +139,7 @@ class Collection(metaclass=Node):
         if child in self._fields:
             return (
                 child in self._allowed_fields
-                if self._permitted_fields
+                if self._permitted_fields_by_user_group
                 else True
             )
         return False
