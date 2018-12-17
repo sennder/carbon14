@@ -92,6 +92,8 @@ class Node(type):
 class Collection(metaclass=Node):
 
     _source = ()
+    _permitted_fields_by_user_group = None
+    _allowed_fields = set()
 
     id = Field()
 
@@ -135,10 +137,11 @@ class Collection(metaclass=Node):
 
     def field_is_allowed_and_accessible_according_to_policy(self, child):
         if child in self._fields:
-            if not self.field_based_access_policy:
-                return True
-            for group, allowed_fields in self.field_based_access_policy.items():
-                return child in allowed_fields
+            return (
+                child in self._allowed_fields
+                if self._permitted_fields_by_user_group
+                else True
+            )
         return False
 
 
