@@ -92,9 +92,6 @@ class Node(type):
 class Collection(metaclass=Node):
 
     _source = ()
-    _permitted_fields_by_user_group = None
-    _allowed_fields = set()
-
     id = Field()
 
     def _to_value(
@@ -129,20 +126,11 @@ class Collection(metaclass=Node):
                 )
                 for child, query in children.items()
                 if self.field_is_allowed_and_accessible_according_to_policy(
-                    child
+                    child, ctx.user
                 )
             }
             for instance in instances
         ]
-
-    def field_is_allowed_and_accessible_according_to_policy(self, child):
-        if child in self._fields:
-            return (
-                child in self._allowed_fields
-                if self._permitted_fields_by_user_group
-                else True
-            )
-        return False
 
 
 class RootNode:
