@@ -89,13 +89,13 @@ class ModelCollection(Collection):
     def field_is_allowed_and_accessible_according_to_policy(self, child, user):
         if child in self._fields:
             if self._permitted_fields_by_user_group:
-                allowed_fields = self.set_allowed_fields(user)
+                allowed_fields = self.get_allowed_fields(user)
                 return child in allowed_fields
             else:
                 return True
         return False
 
-    def set_allowed_fields(self, user):
+    def get_allowed_fields(self, user):
         allowed_fields = set()
         for group in user.group_names:
             allowed_fields.update(
