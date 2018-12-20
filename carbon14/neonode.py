@@ -100,7 +100,7 @@ class Collection(metaclass=Node):
         instances = self._source if instances is ... else instances
         children = children or {}
         children.setdefault('id', {'parameters': {}, 'children': {}})
-        self.allowed_fields = None
+        self.permitted_fields = None
         instances = self._resolve(level, instances, **kwargs)
         children = self._filter_children(children, instances, **kwargs)
 
@@ -135,8 +135,8 @@ class Collection(metaclass=Node):
     def field_is_allowed_and_accessible_according_to_policy(self, child):
         if child in self._fields:
             return (
-                child in self.allowed_fields
-                if self.allowed_fields
+                child in self.permitted_fields
+                if self.permitted_fields
                 else True
             )
         return False
