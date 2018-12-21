@@ -100,7 +100,7 @@ class Collection(metaclass=Node):
         instances = self._source if instances is ... else instances
         children = children or {}
         children.setdefault('id', {'parameters': {}, 'children': {}})
-        self.field_based_access_policy = None
+        self.permitted_fields = None
         instances = self._resolve(level, instances, **kwargs)
         children = self._filter_children(children, instances, **kwargs)
 
@@ -126,11 +126,20 @@ class Collection(metaclass=Node):
                 )
                 for child, query in children.items()
                 if self.field_is_allowed_and_accessible_according_to_policy(
-                    child, ctx.user
+                    child
                 )
             }
             for instance in instances
         ]
+
+    def field_is_allowed_and_accessible_according_to_policy(self, child):
+        if child in self._fields:
+            return (
+                child in self.permitted_fields
+                if self.permitted_fields
+                else True
+            )
+        return False
 
 
 class RootNode:
