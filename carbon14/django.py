@@ -71,12 +71,14 @@ class ModelCollection(Collection):
             if ids is not None:
                 instances = instances.filter(id__in=ids)
 
+        if use_permissions:
+            instances = instances.has_permission(ctx.user)
+
         if sort_order:
             sort_order_list = sort_order.split(',')
             instances = instances.order_by(*sort_order_list)
-
-        if use_permissions:
-            instances = instances.has_permission(ctx.user)
+        # Do NOT call all() after order_by on the queryset, it messes
+        # up the sort order.
 
         # Pagination must happen as *last* filter operation
         return paginate(instances, offset=offset, limit=limit)
@@ -118,7 +120,7 @@ class PointField(Field):
 
 
 def paginate(instances, offset, limit):
-    instances = instances.all()[offset:]
+    instances = instances[offset:]
     if limit:
         instances = instances[:limit]
     return instances
