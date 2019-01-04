@@ -79,8 +79,7 @@ class ModelCollection(Collection):
             instances = instances.has_permission(ctx.user)
 
         # Pagination must happen as *last* filter operation
-        instances = paginate(instances, offset=offset, limit=limit)
-        return instances
+        return paginate(instances, offset=offset, limit=limit)
 
 
 class GraphQLView(APIView):
