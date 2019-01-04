@@ -1,16 +1,21 @@
 from carbon14.django_queryset_operations import sort_instances
 from unittest.mock import Mock
+from unittest import TestCase
 
 
-def test_sort_instances():
-    queryset = Mock()
-    queryset.order_by.return_value = queryset
+class SortInstancesTest(TestCase):
+    def setUp(self):
+        self.queryset = Mock()
+        self.queryset.order_by.return_value = self.queryset
 
-    sort_instances(queryset, sort_order=None)
-    assert queryset.order_by.called_once_with()
+    def test_no_sort_order(self):
+        sort_instances(self.queryset, sort_order=None)
+        self.queryset.order_by.assert_called_once_with('id')
 
-    sort_instances(queryset, sort_order="a,b")
-    assert queryset.order_by.called_once_with()
+    def test_with_sort_order(self):
+        sort_instances(self.queryset, sort_order='a,b')
+        self.queryset.order_by.assert_called_once_with('a', 'b', 'id')
 
-    sort_instances(queryset, sort_order="a,b, id")
-    assert queryset.order_by.called_once_with()
+    def test_with_sort_order_with_id(self):
+        sort_instances(self.queryset, sort_order='a,b,id')
+        self.queryset.order_by.assert_called_once_with('a', 'b', 'id')
