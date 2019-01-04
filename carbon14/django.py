@@ -74,14 +74,10 @@ class ModelCollection(Collection):
         if use_permissions:
             instances = instances.has_permission(ctx.user)
 
-        if sort_order:
-            sort_order_list = sort_order.split(',')
-            instances = instances.order_by(*sort_order_list)
-        # Do NOT call all() after order_by on the queryset, it messes
-        # up the sort order.
+        instances = sort_instances(instances, sort_order=sort_order)
 
         # Pagination must happen as *last* filter operation
-        return paginate(instances, offset=offset, limit=limit)
+        return paginate_instances(instances, offset=offset, limit=limit)
 
 
 class GraphQLView(APIView):
@@ -119,7 +115,17 @@ class PointField(Field):
         return value
 
 
-def paginate(instances, offset, limit):
+def sort_instances(instances, sort_order):
+    sort_order_list = []
+    if sort_order:
+        sort_order_list += sort_order.split(',')
+    # Sort by ID as lowest priority to make sort order deterministic
+    if 'id' not in sort_order_list:
+        sort_order_list.append('id')
+    return instances.order_by(*sort_order_list)
+
+
+def paginate_instances(instances, offset, limit):
     instances = instances[offset:]
     if limit:
         instances = instances[:limit]
