@@ -78,11 +78,8 @@ class ModelCollection(Collection):
         if use_permissions:
             instances = instances.has_permission(ctx.user)
 
-        instances = instances.all()[offset:]
-
-        if limit:
-            instances = instances[:limit]
-
+        # Pagination must happen as *last* filter operation
+        instances = paginate(instances, offset=offset, limit=limit)
         return instances
 
 
@@ -119,3 +116,10 @@ class PointField(Field):
         if isinstance(value, Point):
             value = tuple(value)
         return value
+
+
+def paginate(instances, offset, limit):
+    instances = instances.all()[offset:]
+    if limit:
+        instances = instances[:limit]
+    return instances
