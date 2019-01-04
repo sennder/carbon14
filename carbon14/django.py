@@ -78,7 +78,7 @@ class ModelCollection(Collection):
             sort_order_list = sort_order.split(',')
             instances = instances.order_by(*sort_order_list)
         # Do NOT call all() after order_by on the queryset, it messes
-        # up the sort order
+        # up the sort order.
 
         # Pagination must happen as *last* filter operation
         return paginate(instances, offset=offset, limit=limit)
