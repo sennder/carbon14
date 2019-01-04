@@ -75,15 +75,11 @@ class ModelCollection(Collection):
             sort_order_list = sort_order.split(',')
             instances = instances.order_by(*sort_order_list)
 
-        instances = instances.all()[offset:]
-
         if use_permissions:
             instances = instances.has_permission(ctx.user)
 
-        if limit:
-            instances = instances[:limit]
-
-        return instances
+        # Pagination must happen as *last* filter operation
+        return paginate(instances, offset=offset, limit=limit)
 
 
 class GraphQLView(APIView):
@@ -119,3 +115,10 @@ class PointField(Field):
         if isinstance(value, Point):
             value = tuple(value)
         return value
+
+
+def paginate(instances, offset, limit):
+    instances = instances.all()[offset:]
+    if limit:
+        instances = instances[:limit]
+    return instances
