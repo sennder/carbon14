@@ -1,10 +1,12 @@
-
+import logging
 from collections import defaultdict
 from xoutil.context import context
 from xoutil.objects import get_first_of
 from xoutil.decorator.meta import decorator
 
 from .errors import MissingCollection, MissingFields
+
+log = logging.getLogger(__name__)
 
 
 def merge_dicts(dest, source):
@@ -131,6 +133,9 @@ class Collection(metaclass=Node):
         ]
 
     def field_is_accessible(self, child):
+        if self._fields is None:
+            log.error("self._fields is None")
+
         return (
             self._fields
             and child in self._fields
