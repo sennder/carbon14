@@ -1,10 +1,12 @@
-
+import logging
 from collections import defaultdict
 from xoutil.context import context
 from xoutil.objects import get_first_of
 from xoutil.decorator.meta import decorator
 
 from .errors import MissingCollection, MissingFields
+
+log = logging.getLogger(__name__)
 
 
 def merge_dicts(dest, source):
@@ -125,21 +127,28 @@ class Collection(metaclass=Node):
                     **dict(query['parameters'], ctx=ctx)
                 )
                 for child, query in children.items()
-                if self.field_is_allowed_and_accessible_according_to_policy(
-                    child
-                )
+                if self.field_is_accessible(child)
             }
             for instance in instances
         ]
 
-    def field_is_allowed_and_accessible_according_to_policy(self, child):
-        if child in self._fields:
-            return (
-                child in self.permitted_fields
-                if self.permitted_fields
-                else True
+    def field_is_accessible(self, child):
+        self.log_if_no_fields()
+        return (
+            self._fields
+            and child in self._fields
+            and (
+                not self.permitted_fields
+                or child in self.permitted_fields
             )
-        return False
+        )
+
+    def log_if_no_fields(self):
+        if not self._fields:
+            log.error(
+                f"There are no fields defined for this collection: "
+                f"self._fields is {self._fields}."
+            )
 
 
 class RootNode:
