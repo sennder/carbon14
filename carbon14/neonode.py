@@ -131,13 +131,11 @@ class Collection(metaclass=Node):
         ]
 
     def field_is_accessible(self, child):
-        if child in self._fields:
-            return (
-                child in self.permitted_fields
-                if self.permitted_fields
-                else True
-            )
-        return False
+        return (
+            self._fields
+            and child in self._fields
+            and (not self.permitted_fields or child in self.permitted_fields)
+        )
 
 
 class RootNode:

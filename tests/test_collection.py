@@ -10,6 +10,11 @@ class TestFieldIsAccessible(TestCase):
     def setUp(self):
         self.collection = Collection()
 
+    def test_not_accessible_if_fields_is_none(self):
+        self.collection._fields = None
+
+        assert not self.collection.field_is_accessible(child=CHILD)
+
     def test_not_accessible_if_no_fields(self):
         self.collection._fields = {}
 
