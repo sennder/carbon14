@@ -125,14 +125,12 @@ class Collection(metaclass=Node):
                     **dict(query['parameters'], ctx=ctx)
                 )
                 for child, query in children.items()
-                if self.field_is_allowed_and_accessible_according_to_policy(
-                    child
-                )
+                if self.field_is_accessible(child)
             }
             for instance in instances
         ]
 
-    def field_is_allowed_and_accessible_according_to_policy(self, child):
+    def field_is_accessible(self, child):
         if child in self._fields:
             return (
                 child in self.permitted_fields
