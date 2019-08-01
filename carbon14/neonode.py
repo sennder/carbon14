@@ -133,22 +133,25 @@ class Collection(metaclass=Node):
         ]
 
     def field_is_accessible(self, child):
-        self.log_if_no_fields()
-        return (
-            self._fields
-            and child in self._fields
-            and (
-                not self.permitted_fields
-                or child in self.permitted_fields
-            )
-        )
-
-    def log_if_no_fields(self):
         if not self._fields:
-            log.error(
-                f"There are no fields defined for this collection: "
-                f"self._fields is {self._fields}."
-            )
+            self.log_no_fields()
+            return False
+
+        if child not in self._fields:
+            return False
+
+        permitted_fields = self.permitted_fields
+
+        if not permitted_fields:
+            return True
+
+        return child in permitted_fields
+
+    def log_no_fields(self):
+        log.error(
+            f"There are no fields defined for this collection: "
+            f"self._fields is {self._fields}."
+        )
 
 
 class RootNode:
